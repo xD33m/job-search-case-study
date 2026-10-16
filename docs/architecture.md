@@ -9,11 +9,11 @@ flowchart TD
   F[Fetch<br/>scheduled source adapters] --> N[Normalise<br/>postings become cards]
   N --> D1[Dedupe stages 1-3<br/>URL, exact keys, SimHash bands]
   D1 --> D4[Dedupe stage 4<br/>5-word shingle overlap]
-  D4 -->|>= 0.9| M[Merge]
-  D4 -->|0.3 to 0.9| P[Possible duplicate<br/>user confirms]
+  D4 -->|"overlap 0.9 or more"| M[Merge]
+  D4 -->|"0.3 to 0.9"| P[Possible duplicate<br/>user confirms]
   M --> X
   D4 -->|distinct| X[Facts extraction<br/>small model, strict schema,<br/>no CV in the prompt]
-  X --> S[Salary<br/>stated > extracted > estimate<br/>clamped to official wage quartiles]
+  X --> S["Salary<br/>stated, else extracted, else estimate<br/>clamped to official wage quartiles"]
   S --> C[Commute<br/>MOTIS transit and car times]
   C --> FL[Filters, per user]
   FL --> SC[Deterministic score 0-100<br/>stored per-factor breakdown]
@@ -85,7 +85,7 @@ flowchart LR
 ```mermaid
 flowchart TD
   PR[Pull request] --> CH[ci_changes.sh<br/>diff vs. base]
-  CH -->|code| CK[check: ruff, pyright strict,<br/>full suite + 98 % coverage, docs]
+  CH -->|code| CK["check: ruff, pyright strict,<br/>full suite + 98 % coverage, docs"]
   CH -->|docs only| DC[docs: OKF validator + docs-reading test]
   CH -->|image inputs| SM[smoke: build amd64, run the container]
   CH -->|PowerShell| PS[Windows runner: parse + Pester]
@@ -97,7 +97,7 @@ flowchart TD
   MAIN --> RPI[release-pi: Pi runner<br/>native arm64 build]
   RPI --> SMK2[pull by digest, smoke] --> PIT[move tag pi] --> INST[host updater installs<br/>busy check, backup, health, rollback]
 
-  NIGHT[Nightly on main] --> ALL[everything + suite at 3 clock instants<br/>+ multi-arch build; skipped if main passed]
+  NIGHT[Nightly on main] --> ALL["everything + suite at 3 clock instants<br/>+ multi-arch build, skipped if main passed"]
   WEEK[Weekly] --> LIVE[live smoke vs. real sources on the Pi]
 ```
 

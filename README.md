@@ -68,7 +68,7 @@ flowchart LR
   SERVE --> NTFY
   SERVE --> HA
   SERVE --> WOL -. magic packet .-> PC
-  PC <-- lease API --> SERVE
+  PC <-->|lease API| SERVE
   UPD --> S3B
   UPD -. pulls image, restarts .-> SERVE
 ```
@@ -137,6 +137,7 @@ Details: [ADR 0003](docs/decisions/0003-llm-calls-and-validation.md), [ADR 0013]
 **Change-aware CI ("run on a PR what its changes need").** Picking tests per PR would be unsafe here: the coverage gate is global, and the architecture, clock and network guards fail on changes far from their own files. So the unit of selection is the CI *job*, not the test. A small script maps the diff to jobs. Docs-only changes skip the suite, image inputs add a container smoke test, PowerShell changes add the Windows job, and any change to CI itself runs everything:
 
 ```sh
+# condensed from the private repo's scripts/ci_changes.sh
 case "$file" in
   .github/workflows/*|scripts/ci_changes.sh|scripts/check.sh) all; exit 0 ;;
 esac
